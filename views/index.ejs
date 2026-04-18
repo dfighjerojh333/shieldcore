@@ -201,59 +201,48 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
 }
 
 /* Arrow pointing to top-right (downloads icon) */
+/* Arrow pointing to top-right (downloads icon) */
 .arrow-pointer {
   position: fixed;
-  top: 60px; right: 60px;
+  top: 10px;
+  right: 140px; /* смещение от правого края — примерно где иконка загрузок */
   z-index: 100001;
-  width: 240px; height: 240px;
+  width: 140px;
+  height: 140px;
   pointer-events: none;
   animation: arrowBounce 1.2s ease-in-out infinite;
+  transform-origin: top right;
 }
+
 @keyframes arrowBounce {
   0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(20px, -20px); }
+  50% { transform: translate(8px, -8px); }
 }
+
 .arrow-pointer svg {
-  width: 100%; height: 100%;
-  filter: drop-shadow(0 0 18px rgba(244,180,0,0.9));
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 14px rgba(244, 180, 0, 0.9));
 }
 
-/* Highlight ring on top-right corner where browser download icon usually sits */
-.target-ring {
-  position: fixed;
-  top: 8px; right: 8px;
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  border: 3px solid #f4b400;
-  z-index: 100001;
-  pointer-events: none;
-  animation: targetPulse 1.2s ease-out infinite;
-}
-@keyframes targetPulse {
-  0% { box-shadow: 0 0 0 0 rgba(244,180,0,0.7); transform: scale(1); }
-  100% { box-shadow: 0 0 0 30px rgba(244,180,0,0); transform: scale(1.15); }
+/* Планшеты */
+@media (max-width: 900px) {
+  .arrow-pointer {
+    width: 110px;
+    height: 110px;
+    top: 8px;
+    right: 110px;
+  }
 }
 
-.proceed-btn {
-  display: inline-block; background: #1a73e8; color: #fff;
-  font-size: 16px; font-weight: 600; padding: 13px 38px;
-  border: none; border-radius: 6px; cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(26,115,232,0.4);
-  transition: all 0.2s;
-}
-.proceed-btn:hover { background: #1557b0; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(26,115,232,0.5); }
-
+/* Мобилки */
 @media (max-width: 600px) {
-  .tabs-bar { padding-left: 20px; }
-  .modal-body { padding: 22px 20px; }
-  .title-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .action-row { flex-direction: column; align-items: stretch; }
-  .proceed-btn { width: 100%; text-align: center; }
-  .title-text h1 { font-size: 19px; }
-  .step2-content h2 { font-size: 26px; }
-  .step2-content p { font-size: 15px; }
-  .arrow-pointer { width: 160px; height: 160px; top: 40px; right: 30px; }
+  .arrow-pointer {
+    width: 90px;
+    height: 90px;
+    top: 6px;
+    right: 80px;
+  }
 }
 </style>
 </head>
